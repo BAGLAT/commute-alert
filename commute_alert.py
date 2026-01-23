@@ -1,15 +1,13 @@
 import requests
 import datetime
 import os
-
-import os
-
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-PUSHOVER_USER_KEY = os.getenv("PUSHOVER_USER_KEY")
-PUSHOVER_APP_TOKEN = os.getenv("PUSHOVER_APP_TOKEN")
-
+from zoneinfo import ZoneInfo
 
 # ---------------- CONFIG ----------------
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
+PUSHOVER_USER_KEY = os.getenv("PUSHOVER_USER_KEY")
+PUSHOVER_APP_TOKEN = os.getenv("PUSHOVER_APP_TOKEN")
 
 ORIGIN = "Hampden Hill, Corballis, Donabate,County Dublin, Ireland"
 DESTINATION = "Mastercard South County Business Park, Leopardstown, Dublin 18, Ireland"
@@ -36,11 +34,11 @@ def mark_notified_today():
 def get_travel_time_minutes():
     url = "https://maps.googleapis.com/maps/api/directions/json"
     params = {
-        "origin": "Hampden Hill, Corballis, Donabate,County Dublin, Ireland",
-        "destination": "Mastercard South County Business Park, Leopardstown, Dublin 18, Ireland",
+        "origin": ORIGIN,
+        "destination": DESTINATION,
         "departure_time": "now",
         "traffic_model": "best_guess",
-        "key": "AIzaSyCVx6fCzmq2_LtqgfSzP6ep-aUouGeLWAs"
+        "key": GOOGLE_API_KEY
     }
 
     response = requests.get(url, params=params)
@@ -57,48 +55,47 @@ def get_travel_time_minutes():
 def send_notification(minutes):
     url = "https://api.pushover.net/1/messages.json"
     payload = {
-        "token": "akkacpekepszut77ha5xore3ysoo1n",
-        "user": "unj7j6nwm5wjivmzkd5sezy9s95omq",
+        "token": PUSHOVER_APP_TOKEN,
+        "user": PUSHOVER_USER_KEY,
         "title": "🚗 Commute Alert",
-        "message": f"Traffic is light! Travel time is {minutes} minutes.\nGood time to leave.",
-        "priority": 0
+        "message": (
+            f"Traffic is light!\n"
+            f"Current commute: {minutes} minutes.\n"
+            f"Good time to leave."
+        )
     }
 
-    response = requests.post(url, data=payload)
-    result = response.json()
-    
-    if result.get("status") == 1:
-        print(f"✅ Notification sent successfully! Travel time: {minutes} minutes")
-    else:
-        print(f"❌ Failed to send notification: {result.get('errors', 'Unknown error')}")
-        print(f"Response: {result}")
+    requests.post(url, data=payload)
+
+
+def is_valid_time_window():
+    ireland_tz = ZoneInfo("Europe/Dublin")
+    now = datetime.datetime.now(tz=ireland_tz)
+
+    # Weekday: Monday=0, Sunday=6
+    if now.weekday() >= 5:
+        return False
+
+    # Time window: 07:00 – 13:00
+    start = now.replace(hour=7, minute=0, second=0, microsecond=0)
+    end = now.replace(hour=12, minute=0, second=0, microsecond=0)
+
+    return start <= now < end
 
 
 def main():
-    now = datetime.datetime.now()
+    if not is_valid_time_window():
+        return
 
-    # Only between 7 AM and 12 PM
-    # if not (7 <= now.hour < 12):
-    #     return
+    if already_notified_today():
+        return
 
-    # if already_notified_today():
-    #     return
+    minutes = get_travel_time_minutes()
 
-    try:
-        minutes = get_travel_time_minutes()
-        print(f"📍 Current travel time: {minutes} minutes (threshold: {TIME_THRESHOLD_MINUTES} minutes)")
-        
-        if minutes < TIME_THRESHOLD_MINUTES:
-            print(f"✅ Travel time is below threshold! Sending notification...")
-            send_notification(minutes)
-            mark_notified_today()
-        else:
-            print(f"⏳ Travel time is {minutes} minutes (>= {TIME_THRESHOLD_MINUTES} minutes). No notification sent.")
-    except Exception as e:
-        print(f"❌ Error: {e}")
-        raise
+    if minutes < TIME_THRESHOLD_MINUTES:
+        send_notification(minutes)
+        mark_notified_today()
 
 
 if __name__ == "__main__":
     main()
-
