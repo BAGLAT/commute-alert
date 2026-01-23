@@ -10,10 +10,6 @@ PUSHOVER_APP_TOKEN = os.getenv("PUSHOVER_APP_TOKEN")
 
 
 # ---------------- CONFIG ----------------
-GOOGLE_API_KEY = "AIzaSyCVx6fCzmq2_LtqgfSzP6ep-aUouGeLWAs"
-
-PUSHOVER_USER_KEY = "unj7j6nwm5wjivmzkd5sezy9s95omq"
-PUSHOVER_APP_TOKEN = "akkacpekepszut77ha5xore3ysoo1n"
 
 ORIGIN = "Hampden Hill, Corballis, Donabate,County Dublin, Ireland"
 DESTINATION = "Mastercard South County Business Park, Leopardstown, Dublin 18, Ireland"
@@ -105,3 +101,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
