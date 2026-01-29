@@ -2,7 +2,7 @@ name: Commute Alert
 
 on:
   schedule:
-    - cron: "*/15 7-11 * * *"
+    - cron: "*/15 6-11 * * 1-5"
   workflow_dispatch:
 
 jobs:
