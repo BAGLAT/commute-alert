@@ -12,7 +12,7 @@ PUSHOVER_APP_TOKEN = os.getenv("PUSHOVER_APP_TOKEN")
 ORIGIN = "Hampden Hill, Corballis, Donabate,County Dublin, Ireland"
 DESTINATION = "Mastercard South County Business Park, Leopardstown, Dublin 18, Ireland"
 
-TIME_THRESHOLD_MINUTES = 40
+TIME_THRESHOLD_MINUTES = 200
 NOTIFIED_FILE = "notified_today.txt"
 # ----------------------------------------
 
@@ -99,3 +99,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
