@@ -9,8 +9,8 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 PUSHOVER_USER_KEY = os.getenv("PUSHOVER_USER_KEY")
 PUSHOVER_APP_TOKEN = os.getenv("PUSHOVER_APP_TOKEN")
 
-ORIGIN = "Hampden Hill, Corballis, Donabate,County Dublin, Ireland"
-DESTINATION = "Mastercard South County Business Park, Leopardstown, Dublin 18, Ireland"
+ORIGIN = "Mastercard South County Business Park, Leopardstown, Dublin 18, Ireland"
+DESTINATION = "Hampden Hill, Corballis, Donabate,County Dublin, Ireland"
 
 TIME_THRESHOLD_MINUTES = 200
 NOTIFIED_FILE = "notified_today.txt"
@@ -99,4 +99,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
